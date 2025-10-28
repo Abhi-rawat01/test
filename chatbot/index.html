@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Support Chatbot</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="chat-app">
+      <header class="chat-app__header">
+        <h1 class="chat-app__title">Support Chatbot</h1>
+        <button class="chat-app__clear" type="button" id="clearButton" aria-label="Clear conversation">
+          Clear chat
+        </button>
+      </header>
+      <main class="chat-app__body">
+        <section
+          class="chat-window"
+          id="chatWindow"
+          aria-live="polite"
+          aria-label="Conversation"
+        ></section>
+        <form class="chat-input" id="chatForm" autocomplete="off">
+          <label class="visually-hidden" for="chatMessage">Type your message</label>
+          <input
+            id="chatMessage"
+            class="chat-input__field"
+            type="text"
+            name="message"
+            placeholder="Ask me about hours, pricing, contact..."
+            aria-required="true"
+          />
+          <button class="chat-input__send" type="submit" aria-label="Send message">
+            Send
+          </button>
+        </form>
+      </main>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>
