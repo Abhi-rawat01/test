@@ -1,61 +1,111 @@
-# 🚗 Hill Climb Physics
+# 💬 WhatsApp-Style Chat App
 
-A **2D physics-based car driving game** inspired by *Hill Climb Racing*.  
-Navigate through challenging hilly terrain while managing fuel and maintaining balance.
+A modern WhatsApp-inspired chat experience built with **React**, **Tailwind CSS**, and **Supabase**. Enjoy realtime messaging, authentication, and a sleek dark user interface optimised for both desktop and mobile.
 
 ---
 
 ## ✨ Features
 
-- ⚙️ **Realistic Physics** — Gravity, collision detection, momentum, and terrain interaction  
-- 🌄 **Dynamic Terrain** — Procedurally generated hills and valleys  
-- ⛽ **Fuel Management** — Limited fuel adds a strategic challenge  
-- 🎮 **Responsive Controls** — Smooth acceleration and braking  
-- 📏 **Distance Tracking** — Compete for the longest distance  
-- 🧩 **Visual Feedback** — Animated wheels, car tilting, and terrain rendering  
+- 🔐 **Supabase Auth** – Email/password authentication with persistent sessions
+- ⚡ **Realtime Messaging** – Messages update instantly through Supabase realtime channels
+- 🧑‍🤝‍🧑 **Conversation List** – See recent chats with last message preview and timestamps
+- 💬 **Message Threads** – Styled message bubbles with smooth animations and auto-scroll
+- 🎛️ **Rich Input Bar** – Emoji, attach, microphone, and send actions using Lucide icons
+- 🌙 **Dark WhatsApp Theme** – Tailwind-powered styling with glassmorphism accents
+- 📱 **Responsive Layout** – Mobile-first design that adapts across breakpoints
 
 ---
 
-## 🕹️ How to Play
+## 🗂️ Project Structure
 
-1. Open **`index.html`** in your web browser  
-2. Use **Arrow Keys** to control the car:
-   - → **Right Arrow** — Accelerate forward  
-   - ← **Left Arrow** — Brake / Reverse  
-3. Navigate through the hilly terrain  
-4. Monitor your fuel level — when it runs out, the game ends  
-5. Try to travel as far as possible without crashing 🚧  
-
----
-
-## ⚡ Game Mechanics
-
-- 🪂 **Physics:** The car responds to gravity, friction, and collisions  
-- 🏔️ **Terrain:** Each playthrough features procedurally generated terrain  
-- ⛽ **Fuel Consumption:** Acceleration consumes fuel; braking does not  
-- 🔩 **Collision System:** Wheels interact dynamically with the terrain  
-- 🎥 **Camera:** Smoothly follows the car across the map  
-
----
-
-## 🧠 Technical Details
-
-- Built using **HTML5 Canvas** for rendering  
-- Pure **JavaScript physics engine** (no external libraries)  
-- Fully **responsive** for various screen sizes  
-- Runs **locally** — no installation or dependencies required  
-
----
-
-## 🚀 Getting Started
-
-```bash
-# Clone the repository
-git clone https://github.com/your-username/hill-climb-physics.git
-
-# Open the project folder
-cd hill-climb-physics
-
-# Launch the game
-open index.html
 ```
+src/
+  components/
+    Sidebar.jsx
+    ChatWindow.jsx
+    MessageInput.jsx
+  context/
+    SupabaseContext.jsx
+  App.jsx
+  main.jsx
+  index.css
+public/
+  vite.svg
+```
+
+Configuration & tooling files:
+
+- `.env.example` – Supabase environment variable template
+- `package.json` – npm scripts and dependencies
+- `postcss.config.js`, `tailwind.config.js`, `vite.config.js`
+
+---
+
+## 🧰 Tech Stack
+
+- [React](https://react.dev/) with [Vite](https://vitejs.dev/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Supabase](https://supabase.com/) for auth and realtime
+- [lucide-react](https://lucide.dev/) icon set
+
+---
+
+## ⚙️ Getting Started
+
+1. **Install dependencies**
+
+   ```bash
+   npm install
+   ```
+
+2. **Configure Supabase**
+
+   - Duplicate `.env.example` → `.env`
+   - Populate the following values from your Supabase project dashboard:
+
+     ```env
+     VITE_SUPABASE_URL=your_supabase_url
+     VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+     ```
+
+3. **Start the development server**
+
+   ```bash
+   npm run dev
+   ```
+
+   The app runs at [http://localhost:5173](http://localhost:5173) by default.
+
+---
+
+## 🗄️ Supabase Schema Expectations
+
+Create the following tables in your Supabase project (simplified schema):
+
+- **profiles**: `user_id`, `username`, `avatar_url`
+- **conversations**: `id`, `user1_id`, `user2_id`, `created_at`
+- **messages**: `id`, `conversation_id`, `sender_id`, `receiver_id`, `content`, `created_at`, `updated_at`
+
+The application listens for realtime changes on the `messages` table.
+
+---
+
+## 📝 Available Scripts
+
+- `npm run dev` – Start Vite in development mode
+- `npm run build` – Create a production build
+- `npm run preview` – Preview the production build locally
+
+---
+
+## 🛠️ Development Notes
+
+- Tailwind utility classes keep styling scoped and consistent
+- Animations (`fade-in`, `slide-up`, `pulse-soft`) are defined in `tailwind.config.js`
+- Supabase client and auth state are provided via `SupabaseContext`
+
+---
+
+## 📄 License
+
+This project is provided as-is for demonstration and educational purposes.

@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background-color: #0b1727;
+}
+
+body {
+  @apply bg-chat-darkest text-gray-100 antialiased;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.4) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  @apply bg-slate-600/60 rounded-full;
+}
+
+@layer components {
+  .chat-bubble {
+    @apply max-w-[75%] px-4 py-2 rounded-2xl shadow-bubble transition-transform duration-150 ease-out;
+  }
+
+  .chat-bubble-sent {
+    @apply bg-gradient-to-br from-chat-accent to-emerald-500 text-white ml-auto;
+  }
+
+  .chat-bubble-received {
+    @apply bg-chat-dark text-slate-200;
+  }
+
+  .chat-timestamp {
+    @apply text-xs text-slate-400 mt-1 select-none;
+  }
+
+  .chat-input-button {
+    @apply flex h-10 w-10 items-center justify-center rounded-full bg-chat-dark text-slate-300 transition-transform duration-150 hover:-translate-y-[1px] hover:bg-chat-muted hover:text-white active:scale-95;
+  }
+
+  .chat-icon-button {
+    @apply flex h-11 w-11 items-center justify-center rounded-full bg-chat-dark text-slate-300 transition-colors duration-150 hover:bg-chat-muted hover:text-white;
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-white/5 backdrop-blur-xl border border-white/10;
+  }
+}

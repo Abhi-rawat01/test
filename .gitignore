@@ -43,3 +43,10 @@ node_modules/
 
 # Yarn Integrity file
 .yarn-integrity
+
+# Build output
+dist/
+
+# Environment variables
+.env
+.env.local
