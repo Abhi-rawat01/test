@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hill Climb Physics</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <div class="game-stats">
+                <div class="stat">
+                    <span class="stat-label">Distance:</span>
+                    <span id="distance">0m</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Fuel:</span>
+                    <span id="fuel">100%</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Speed:</span>
+                    <span id="speed">0 km/h</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="game-canvas-container">
+            <canvas id="gameCanvas" width="800" height="400"></canvas>
+        </div>
+        
+        <div class="game-controls">
+            <div class="control-info">
+                <div class="control-group">
+                    <span class="key">←</span> / <span class="key">→</span> Accelerate/Brake
+                </div>
+                <div class="control-group">
+                    <span class="key">Space</span> Restart
+                </div>
+            </div>
+        </div>
+        
+        <div class="game-over" id="gameOver" style="display: none;">
+            <h2>Game Over!</h2>
+            <p>Distance: <span id="finalDistance">0m</span></p>
+            <button id="restartBtn">Play Again</button>
+        </div>
+    </div>
+    
+    <script src="game.js"></script>
+</body>
+</html>
