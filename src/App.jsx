@@ -390,6 +390,51 @@ const App = () => {
     [authMode, signIn, signUp, supabaseConfigured]
   );
 
+  const chatLayout = useMemo(
+    () => (
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-chat-darkest text-white md:grid md:grid-cols-[360px_minmax(0,1fr)]">
+        <div className="border-b border-white/5 md:h-full md:border-b-0 md:border-r">
+          <Sidebar
+            user={user}
+            conversations={conversations}
+            activeConversationId={activeConversation?.id ?? null}
+            onSelectConversation={setActiveConversation}
+            onStartConversation={handleStartConversation}
+            onSignOut={signOut}
+            loading={loadingConversations}
+          />
+        </div>
+        <div className="flex h-full flex-1 flex-col">
+          <ChatWindow
+            conversation={activeConversation}
+            messages={messages}
+            currentUser={user}
+            loading={loadingMessages}
+          />
+          {activeConversation ? (
+            <MessageInput onSend={handleSendMessage} disabled={sending} />
+          ) : (
+            <div className="px-6 pb-6 text-center text-sm text-slate-500">
+              Select or start a conversation to send a message.
+            </div>
+          )}
+        </div>
+      </div>
+    ),
+    [
+      user,
+      conversations,
+      activeConversation,
+      loadingConversations,
+      messages,
+      loadingMessages,
+      handleStartConversation,
+      signOut,
+      handleSendMessage,
+      sending
+    ]
+  );
+
   if (!supabaseConfigured) {
     return (
       <div className="flex h-screen flex-col items-center justify-center gap-6 bg-chat-darkest p-6 text-center text-slate-300">
@@ -502,51 +547,6 @@ const App = () => {
       </div>
     );
   }
-
-  const chatLayout = useMemo(
-    () => (
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-chat-darkest text-white md:grid md:grid-cols-[360px_minmax(0,1fr)]">
-        <div className="border-b border-white/5 md:h-full md:border-b-0 md:border-r">
-          <Sidebar
-            user={user}
-            conversations={conversations}
-            activeConversationId={activeConversation?.id ?? null}
-            onSelectConversation={setActiveConversation}
-            onStartConversation={handleStartConversation}
-            onSignOut={signOut}
-            loading={loadingConversations}
-          />
-        </div>
-        <div className="flex h-full flex-1 flex-col">
-          <ChatWindow
-            conversation={activeConversation}
-            messages={messages}
-            currentUser={user}
-            loading={loadingMessages}
-          />
-          {activeConversation ? (
-            <MessageInput onSend={handleSendMessage} disabled={sending} />
-          ) : (
-            <div className="px-6 pb-6 text-center text-sm text-slate-500">
-              Select or start a conversation to send a message.
-            </div>
-          )}
-        </div>
-      </div>
-    ),
-    [
-      user,
-      conversations,
-      activeConversation,
-      loadingConversations,
-      messages,
-      loadingMessages,
-      handleStartConversation,
-      signOut,
-      handleSendMessage,
-      sending
-    ]
-  );
 
   return <div className="flex h-screen flex-col">{chatLayout}</div>;
 };
