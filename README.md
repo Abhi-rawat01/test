@@ -52,13 +52,21 @@ Configuration & tooling files:
 
 ## ⚙️ Getting Started
 
-1. **Install dependencies**
+1. **Verify prerequisites**
+
+   Ensure you're running Node.js 18.17 or later (this project was tested with Node.js 20.19.5). You can confirm with:
+
+   ```bash
+   node -v
+   ```
+
+2. **Install dependencies**
 
    ```bash
    npm install
    ```
 
-2. **Configure Supabase**
+3. **Configure Supabase**
 
    - Duplicate `.env.example` → `.env`
    - Populate the following values from your Supabase project dashboard:
@@ -68,7 +76,7 @@ Configuration & tooling files:
      VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
      ```
 
-3. **Start the development server**
+4. **Start the development server**
 
    ```bash
    npm run dev
