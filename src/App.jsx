@@ -16,6 +16,7 @@ const App = () => {
   const [messages, setMessages] = useState([]);
   const [loadingMessages, setLoadingMessages] = useState(false);
   const [sending, setSending] = useState(false);
+  const [schemaError, setSchemaError] = useState(null);
   const activeConversationRef = useRef(null);
   const activeConversationMetaRef = useRef({ id: null, participantId: null });
 
@@ -37,6 +38,7 @@ const App = () => {
     setConversations([]);
     setActiveConversation(null);
     setMessages([]);
+    setSchemaError(null);
   }, []);
 
   useEffect(() => {
@@ -56,7 +58,14 @@ const App = () => {
         .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        const handledError = handleSupabaseError(error, 'fetchConversations');
+        if (handledError.isSchemaError) {
+          setSchemaError(handledError);
+          return;
+        }
+        throw error;
+      }
 
       const conversationsData = data ?? [];
       const participantIds = Array.from(
@@ -76,7 +85,14 @@ const App = () => {
           .select('user_id, username, avatar_url')
           .in('user_id', participantIds);
 
-        if (profilesError) throw profilesError;
+        if (profilesError) {
+          const handledError = handleSupabaseError(profilesError, 'fetchConversations - profiles');
+          if (handledError.isSchemaError) {
+            setSchemaError(handledError);
+            return;
+          }
+          throw profilesError;
+        }
 
         (profilesData ?? []).forEach((profile) => {
           profilesMap[profile.user_id] = profile;
@@ -93,7 +109,13 @@ const App = () => {
           .in('conversation_id', conversationIds)
           .order('created_at', { ascending: false });
 
-        if (!lastMessagesError) {
+        if (lastMessagesError) {
+          const handledError = handleSupabaseError(lastMessagesError, 'fetchConversations - messages');
+          if (handledError.isSchemaError) {
+            setSchemaError(handledError);
+            return;
+          }
+        } else {
           (lastMessages ?? []).forEach((message) => {
             if (!lastMessageMap[message.conversation_id]) {
               lastMessageMap[message.conversation_id] = message;
@@ -121,7 +143,12 @@ const App = () => {
         setActiveConversation(null);
       }
     } catch (error) {
-      console.error('Failed to fetch conversations:', error.message);
+      const handledError = handleSupabaseError(error, 'fetchConversations');
+      if (handledError.isSchemaError) {
+        setSchemaError(handledError);
+      } else {
+        console.error('Failed to fetch conversations:', error.message);
+      }
     } finally {
       setLoadingConversations(false);
     }
@@ -145,6 +172,12 @@ const App = () => {
         let { data: messagesData, error } = await query.eq('conversation_id', conversation.id);
 
         if (error) {
+          const handledError = handleSupabaseError(error, 'fetchMessages');
+          if (handledError.isSchemaError) {
+            setSchemaError(handledError);
+            return;
+          }
+          
           if (!error.message.includes('conversation_id')) {
             throw error;
           }
@@ -158,12 +191,24 @@ const App = () => {
             )
             .order('created_at', { ascending: true }));
 
-          if (error) throw error;
+          if (error) {
+            const handledFallbackError = handleSupabaseError(error, 'fetchMessages - fallback');
+            if (handledFallbackError.isSchemaError) {
+              setSchemaError(handledFallbackError);
+              return;
+            }
+            throw error;
+          }
         }
 
         setMessages(messagesData ?? []);
       } catch (error) {
-        console.error('Failed to fetch messages:', error.message);
+        const handledError = handleSupabaseError(error, 'fetchMessages');
+        if (handledError.isSchemaError) {
+          setSchemaError(handledError);
+        } else {
+          console.error('Failed to fetch messages:', error.message);
+        }
         setMessages([]);
       } finally {
         setLoadingMessages(false);
@@ -272,9 +317,19 @@ const App = () => {
           receiver_id: receiverId,
           conversation_id: activeConversation.id ?? null
         });
-        if (error) throw error;
+        if (error) {
+          const handledError = handleSupabaseError(error, 'handleSendMessage');
+          if (handledError.isSchemaError) {
+            setSchemaError(handledError);
+            return;
+          }
+          throw error;
+        }
       } catch (error) {
-        console.error('Failed to send message:', error.message);
+        const handledError = handleSupabaseError(error, 'handleSendMessage');
+        if (!handledError.isSchemaError) {
+          console.error('Failed to send message:', error.message);
+        }
       } finally {
         setSending(false);
       }
@@ -295,7 +350,14 @@ const App = () => {
         .select('user_id, username, avatar_url')
         .ilike('username', identifier.trim());
 
-      if (profileError) throw profileError;
+      if (profileError) {
+        const handledError = handleSupabaseError(profileError, 'handleStartConversation - profiles');
+        if (handledError.isSchemaError) {
+          setSchemaError(handledError);
+          return;
+        }
+        throw profileError;
+      }
       if (!profiles?.length) {
         if (typeof window !== 'undefined') {
           window.alert('No user found with that username.');
@@ -306,12 +368,20 @@ const App = () => {
       const targetProfile = profiles[0];
       const targetId = targetProfile.user_id;
 
-      const { data: existing } = await supabase
+      const { data: existing, error: existingError } = await supabase
         .from('conversations')
         .select('*')
         .or(`and(user1_id.eq.${user.id},user2_id.eq.${targetId}),and(user1_id.eq.${targetId},user2_id.eq.${user.id})`)
         .limit(1)
         .maybeSingle();
+
+      if (existingError) {
+        const handledError = handleSupabaseError(existingError, 'handleStartConversation - existing');
+        if (handledError.isSchemaError) {
+          setSchemaError(handledError);
+          return;
+        }
+      }
 
       if (existing) {
         setActiveConversation({
@@ -329,7 +399,14 @@ const App = () => {
         .select()
         .single();
 
-      if (conversationError) throw conversationError;
+      if (conversationError) {
+        const handledError = handleSupabaseError(conversationError, 'handleStartConversation - new');
+        if (handledError.isSchemaError) {
+          setSchemaError(handledError);
+          return;
+        }
+        throw conversationError;
+      }
 
       const conversationWithProfile = {
         ...newConversation,
@@ -340,7 +417,10 @@ const App = () => {
       setActiveConversation(conversationWithProfile);
       fetchConversations();
     } catch (error) {
-      console.error('Failed to start conversation:', error.message);
+      const handledError = handleSupabaseError(error, 'handleStartConversation');
+      if (!handledError.isSchemaError) {
+        console.error('Failed to start conversation:', error.message);
+      }
     }
   }, [supabase, user, fetchConversations]);
 
@@ -453,6 +533,60 @@ const App = () => {
     return (
       <div className="flex h-screen items-center justify-center bg-chat-darkest text-slate-300">
         Initialising chat experience...
+      </div>
+    );
+  }
+
+  if (schemaError && user) {
+    return (
+      <div className="flex h-screen flex-col items-center justify-center gap-6 bg-chat-darkest p-6 text-center text-slate-300">
+        <div className="max-w-md space-y-6">
+          <div className="space-y-3">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-500/10 mx-auto">
+              <svg className="h-8 w-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4v.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h1 className="text-3xl font-semibold text-white">Database Schema Not Found</h1>
+          </div>
+          <div className="space-y-4 text-left">
+            <p className="text-sm text-slate-400">
+              The required database tables haven't been set up yet. To get started with the chat application, you need to run the SQL setup scripts.
+            </p>
+            <div className="rounded-lg bg-slate-900/50 p-4 border border-slate-700">
+              <p className="text-xs font-mono text-slate-300 break-words">
+                {schemaError.message}
+              </p>
+            </div>
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-slate-300">Steps to fix:</p>
+              <ol className="space-y-2 text-sm text-slate-400 text-left">
+                <li className="flex gap-3">
+                  <span className="flex-shrink-0 font-semibold text-chat-accent">1.</span>
+                  <span>Open the <span className="font-mono bg-slate-900 px-2 py-1 rounded text-slate-300">SUPABASE_SETUP.md</span> file in your project</span>
+                </li>
+                <li className="flex gap-3">
+                  <span className="flex-shrink-0 font-semibold text-chat-accent">2.</span>
+                  <span>Go to your Supabase project's SQL Editor</span>
+                </li>
+                <li className="flex gap-3">
+                  <span className="flex-shrink-0 font-semibold text-chat-accent">3.</span>
+                  <span>Copy and paste each SQL script from the guide (Steps 1-5) and execute them</span>
+                </li>
+                <li className="flex gap-3">
+                  <span className="flex-shrink-0 font-semibold text-chat-accent">4.</span>
+                  <span>Refresh this page once complete</span>
+                </li>
+              </ol>
+            </div>
+          </div>
+          <button
+            onClick={() => window.location.reload()}
+            className="w-full rounded-full bg-chat-accent py-3 text-sm font-semibold text-white transition hover:bg-emerald-500"
+          >
+            Refresh Page
+          </button>
+        </div>
       </div>
     );
   }
