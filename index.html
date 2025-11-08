@@ -1,91 +1,13 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hill Climb Physics</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div class="game-container">
-        <div class="game-header">
-            <div class="game-stats">
-                <div class="stat">
-                    <span class="stat-label">Distance:</span>
-                    <span id="distance">0m</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-label">Fuel:</span>
-                    <div class="fuel-bar-container">
-                        <div id="fuelBar" class="fuel-bar"></div>
-                    </div>
-                    <span id="fuel">100%</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-label">Speed:</span>
-                    <span id="speed">0 km/h</span>
-                </div>
-            </div>
-            <div class="game-buttons">
-                <button id="pauseBtn" class="icon-btn">⏸️ Pause</button>
-                <button id="homeBtn" class="icon-btn">🏠 Menu</button>
-            </div>
-        </div>
-        
-        <div class="game-canvas-container">
-            <canvas id="gameCanvas" width="800" height="400"></canvas>
-        </div>
-        
-        <div class="game-controls">
-            <div class="control-info">
-                <div class="control-group">
-                    <span class="key">←</span> / <span class="key">→</span> Accelerate/Brake
-                </div>
-                <div class="control-group">
-                    <span class="key">↑</span> / <span class="key">↓</span> Tilt Control
-                </div>
-                <div class="control-group">
-                    <span class="key">Space</span> Restart
-                </div>
-            </div>
-        </div>
-        
-        <div class="overlay" id="pauseOverlay" style="display: none;">
-            <div class="menu-box">
-                <h2>⏸️ Paused</h2>
-                <button id="resumeBtn" class="menu-btn">Resume</button>
-                <button id="restartFromPauseBtn" class="menu-btn">Restart</button>
-                <button id="quitBtn" class="menu-btn">Quit to Menu</button>
-            </div>
-        </div>
-        
-        <div class="overlay" id="menuOverlay">
-            <div class="menu-box">
-                <h1>🚗 Hill Climb Physics</h1>
-                <p class="menu-description">Navigate challenging terrain, collect fuel, and travel as far as you can!</p>
-                <button id="startBtn" class="menu-btn primary">Start Game</button>
-                <div class="menu-info">
-                    <h3>How to Play:</h3>
-                    <ul>
-                        <li>Use arrow keys to control your car</li>
-                        <li>Collect fuel canisters to keep driving</li>
-                        <li>Avoid flipping over or running out of fuel</li>
-                        <li>Try to travel the furthest distance!</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        
-        <div class="overlay" id="gameOver" style="display: none;">
-            <div class="menu-box">
-                <h2>Game Over!</h2>
-                <p class="final-score">Distance: <span id="finalDistance">0m</span></p>
-                <button id="restartBtn" class="menu-btn primary">Play Again</button>
-                <button id="menuBtn" class="menu-btn">Main Menu</button>
-            </div>
-        </div>
-    </div>
-    
-    <script src="game.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WhatsApp Style Chat</title>
+  </head>
+  <body class="bg-gray-950">
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>
